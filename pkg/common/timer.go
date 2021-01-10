@@ -22,19 +22,21 @@ import (
 
 // Timer is to call a function periodically.
 type Timer struct {
-	Function func()
+	Function func() error
 	Duration time.Duration
 	Times    int
 }
 
 // Start start a timer.
-func (t *Timer) Start() {
+func (t *Timer) Start() error {
 	ticker := time.NewTicker(t.Duration)
 	if t.Times > 0 {
 		for i := 0; i < t.Times; i++ {
 			select {
 			case <-ticker.C:
-				t.Function()
+				if err := t.Function(); err != nil {
+					return err
+				}
 			default:
 			}
 		}
@@ -42,9 +44,12 @@ func (t *Timer) Start() {
 		for {
 			select {
 			case <-ticker.C:
-				t.Function()
+				if err := t.Function(); err != nil {
+					return err
+				}
 			default:
 			}
 		}
 	}
+	return nil
 }

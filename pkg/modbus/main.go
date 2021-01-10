@@ -48,6 +48,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	globals.FBClient = common.MqttClient{IP: config.Mqtt.FBServerAddress}
+	if err = globals.FBClient.Connect(); err != nil {
+		klog.Fatal(err)
+		os.Exit(1)
+	}
+
 	if err = device.DevInit(config.Configmap); err != nil {
 		klog.Fatal(err)
 		os.Exit(1)

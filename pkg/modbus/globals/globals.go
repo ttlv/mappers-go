@@ -28,3 +28,4 @@ type ModbusDev struct {
 }
 
 var MqttClient common.MqttClient
+var FBClient common.MqttClient

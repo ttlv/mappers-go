@@ -1,5 +1,6 @@
 mqtt:
   server: tcp://127.0.0.1:1883
+  fbserver: tcp://0.0.0.0:1885
   username: ""
   password: ""
   certification: ""

@@ -31,17 +31,18 @@ type GetStatus struct {
 }
 
 // Run timer function.
-func (gs *GetStatus) Run() {
+func (gs *GetStatus) Run() error {
 	gs.Status = gs.Client.GetStatus()
 
 	var payload []byte
 	var err error
 	if payload, err = common.CreateMessageState(gs.Status); err != nil {
 		klog.Error("Create message state failed: ", err)
-		return
+		return err
 	}
 	if err = globals.MqttClient.Publish(gs.topic, payload); err != nil {
 		klog.Error("Publish failed: ", err)
-		return
+		return err
 	}
+	return err
 }

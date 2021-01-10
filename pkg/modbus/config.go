@@ -33,11 +33,12 @@ type Config struct {
 
 // Mqtt is the Mqtt configuration.
 type Mqtt struct {
-	ServerAddress string `yaml:"server,omitempty"`
-	Username      string `yaml:"username,omitempty"`
-	Password      string `yaml:"password,omitempty"`
-	Cert          string `yaml:"certification,omitempty"`
-	PrivateKey    string `yaml:"privatekey,omitempty"`
+	ServerAddress   string `yaml:"server,omitempty"`
+	FBServerAddress string `yaml:"fbserver,omitempty"`
+	Username        string `yaml:"username,omitempty"`
+	Password        string `yaml:"password,omitempty"`
+	Cert            string `yaml:"certification,omitempty"`
+	PrivateKey      string `yaml:"privatekey,omitempty"`
 }
 
 // ErrConfigCert error of certification configuration.
