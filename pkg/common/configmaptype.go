@@ -34,6 +34,8 @@ type DeviceInstance struct {
 	Model            string            `json:"model,omitempty"`
 	Twins            []Twin            `json:"twins,omitempty"`
 	Datas            Data              `json:"data,omitempty"`
+	Properties       []DataProperty    `json:"dataProperties,omitempty"`
+	Topic            string            `json:"datatopic,omitempty"`
 	PropertyVisitors []PropertyVisitor `json:"propertyVisitors,omitempty"`
 }
 

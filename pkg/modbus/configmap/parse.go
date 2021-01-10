@@ -100,7 +100,8 @@ func Parse(path string,
 				return errors.New("PropertyVisitor not found")
 			}
 		}
-
+		instance.Datas.Properties = instance.Properties
+		instance.Datas.Topic = instance.Topic
 		for k := 0; k < len(instance.Datas.Properties); k++ {
 			name := instance.Datas.Properties[k].PropertyName
 			l := 0
