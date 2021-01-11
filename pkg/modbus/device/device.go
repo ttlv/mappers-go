@@ -189,32 +189,34 @@ func initTwin(dev *globals.ModbusDev) {
 
 // initData initialize the timer to get data.
 func initData(dev *globals.ModbusDev) {
-	for i := 0; i < len(dev.Instance.Datas.Properties); i++ {
-		var visitorConfig configmap.ModbusVisitorConfig
-		if err := json.Unmarshal([]byte(dev.Instance.Datas.Properties[i].PVisitor.VisitorConfig), &visitorConfig); err != nil {
-			klog.Error("Unmarshal visitor config failed")
-		}
-		twinData := TwinData{Client: dev.ModbusClient,
-			Name:               dev.Instance.Datas.Properties[i].PropertyName,
-			Type:               dev.Instance.Datas.Properties[i].Metadatas.Type,
-			RegisterType:       visitorConfig.Register,
-			Address:            visitorConfig.Offset,
-			Quantity:           uint16(visitorConfig.Limit),
-			Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
-			DeviceModel:        dev.Instance.Model,
-			DeviceInstanceName: dev.Instance.Name}
-		collectCycle := time.Duration(dev.Instance.Datas.Properties[i].PVisitor.CollectCycle)
-		// If the collect cycle is not set, set it to 1 second.
-		if collectCycle == 0 {
-			collectCycle = 1 * time.Second
-		}
-		timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
-		wg.Add(1)
-		go func() {
-			if err := timer.Start(); err != nil {
-				wg.Done()
+	if dev.Instance.Model=="modebus-rtu-imu-model"{
+		for i := 0; i < len(dev.Instance.Datas.Properties); i++ {
+			var visitorConfig configmap.ModbusVisitorConfig
+			if err := json.Unmarshal([]byte(dev.Instance.Datas.Properties[i].PVisitor.VisitorConfig), &visitorConfig); err != nil {
+				klog.Error("Unmarshal visitor config failed")
 			}
-		}()
+			twinData := TwinData{Client: dev.ModbusClient,
+				Name:               dev.Instance.Datas.Properties[i].PropertyName,
+				Type:               dev.Instance.Datas.Properties[i].Metadatas.Type,
+				RegisterType:       visitorConfig.Register,
+				Address:            visitorConfig.Offset,
+				Quantity:           uint16(visitorConfig.Limit),
+				Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
+				DeviceModel:        dev.Instance.Model,
+				DeviceInstanceName: dev.Instance.Name}
+			collectCycle := time.Duration(dev.Instance.Datas.Properties[i].PVisitor.CollectCycle)
+			// If the collect cycle is not set, set it to 1 second.
+			if collectCycle == 0 {
+				collectCycle = 1 * time.Second
+			}
+			timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
+			wg.Add(1)
+			go func() {
+				if err := timer.Start(); err != nil {
+					wg.Done()
+				}
+			}()
+		}
 	}
 }
 

@@ -54,70 +54,176 @@ func (td *TwinData) Run() error {
 	}
 	s1 := strings.Replace(fmt.Sprintf("%v", td.Results), "[", "", -1)
 	s2 := strings.Replace(s1, "]", "", -1)
-	if td.DeviceInstanceName == "device-shutter01" {
-		var lux, co2, pressure, temperature, humidity float64
-		if td.Name == "lux" {
+		if td.Name == "timestamp" {
 			ss1 := strings.Split(s2, " ")[0]
 			ss2 := strings.Split(s2, " ")[1]
 			ss3 := strings.Split(s2, " ")[2]
 			ss4 := strings.Split(s2, " ")[3]
-			lux = Hex2Dec(ss1, ss2, ss3, ss4)
-			fmt.Println("----------光强----------", lux)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","lux":%v,"state":"%v}`, td.DeviceModel, lux, td.Client.GetStatus()))
-		} else if td.Name == "co2" {
+			ss5 := strings.Split(s2, " ")[4]
+			ss6 := strings.Split(s2, " ")[5]
+			timestamp:=fmt.Sprintf("%v-%v-%v %v:%v:%v",Hex2Dec(ss1),Hex2Dec(ss2),Hex2Dec(ss3),Hex2Dec(ss4),Hex2Dec(ss5),Hex2Dec(ss6))
+			klog.V(2).Info("---------timestamp-----------",timestamp)
+			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","timestamp":%v,"state":"%v}`, td.DeviceModel, timestamp, td.Client.GetStatus()))
+		} else if td.Name == "acceleration" {
 			ss1 := strings.Split(s2, " ")[0]
 			ss2 := strings.Split(s2, " ")[1]
-			co2 = Hex2Dec(ss1, ss2)
-			fmt.Println("----------co2----------", co2)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","co2":%v,"state":"%v"}`, td.DeviceModel, co2, td.Client.GetStatus()))
-		} else if td.Name == "pressure" {
+			ss3 := strings.Split(s2, " ")[2]
+			ss4 := strings.Split(s2, " ")[3]
+			ss5 := strings.Split(s2, " ")[4]
+			ss6 := strings.Split(s2, " ")[5]
+			axh,_:=strconv.Atoi(ss1)
+			axl,_:=strconv.Atoi(ss2)
+			ayh,_:=strconv.Atoi(ss3)
+			ayl,_:=strconv.Atoi(ss4)
+			azh,_:=strconv.Atoi(ss5)
+			azl,_:=strconv.Atoi(ss6)
+			k:= 16.0
+			accX := float64(axh << 8 | axl) / 32768.0 * k
+			accY := float64(ayh << 8 | ayl) / 32768.0 * k
+			accZ := float64(azh << 8 | azl) / 32768.0 * k
+			if accX >= k{
+				accX -= 2 * k
+			}
+			if accY>=k{
+				accY -= 2 * k
+			}
+			if accZ>=k{
+				accZ -= 2 * k
+			}
+			klog.V(2).Info("---------accX-----------",accX)
+			klog.V(2).Info("---------accY-----------",accY)
+			klog.V(2).Info("---------accZ-----------",accZ)
+			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","accX":%v,"accY":%v,"accZ":%v,"state":"%v"}`, td.DeviceModel, accX,accY,accZ, td.Client.GetStatus()))
+		} else if td.Name == "angularVelocity" {
 			ss1 := strings.Split(s2, " ")[0]
 			ss2 := strings.Split(s2, " ")[1]
-			pressure = Hex2Dec(ss1, ss2)
-			fmt.Println("----------压强----------", pressure/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","pressure":%v,"state":"%v"}`, td.DeviceModel, pressure/10, td.Client.GetStatus()))
-		} else if td.Name == "temperature" {
+			ss3 := strings.Split(s2, " ")[2]
+			ss4 := strings.Split(s2, " ")[3]
+			ss5 := strings.Split(s2, " ")[4]
+			ss6 := strings.Split(s2, " ")[5]
+			wxh,_:=strconv.Atoi(ss1)
+			wxl,_:=strconv.Atoi(ss2)
+			wyh,_:=strconv.Atoi(ss3)
+			wyl,_:=strconv.Atoi(ss4)
+			wzh,_:=strconv.Atoi(ss5)
+			wzl,_:=strconv.Atoi(ss6)
+			k:= 2000.0
+			wX := float64(wxh << 8 | wxl) / 32768.0 * k
+			wY := float64(wyh << 8 | wyl) / 32768.0 * k
+			wZ := float64(wzh << 8 | wzl) / 32768.0 * k
+			if wX >= k{
+				wX -= 2 * k
+			}
+			if wY>=k{
+				wY -= 2 * k
+			}
+			if wZ>=k{
+				wZ -= 2 * k
+			}
+			klog.V(2).Info("---------wX-----------",wX)
+			klog.V(2).Info("---------wY-----------",wY)
+			klog.V(2).Info("---------wZ-----------",wZ)
+			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","wX":%v,"wY":%v,"wZ":%v,"state":"%v"}`, td.DeviceModel, wX,wY,wZ, td.Client.GetStatus()))
+		} else if td.Name == "angular" {
 			ss1 := strings.Split(s2, " ")[0]
 			ss2 := strings.Split(s2, " ")[1]
-			humidity = Hex2Dec(ss1, ss2)
-			fmt.Println("----------湿度----------", humidity/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","humidity":%v,"state":"%v"}`, td.DeviceModel, humidity/10, td.Client.GetStatus()))
-		} else if td.Name == "humidity" {
-			ss1 := strings.Split(s2, " ")[2]
-			ss2 := strings.Split(s2, " ")[3]
-			temperature = Hex2Dec(ss1, ss2)
-			fmt.Println("----------温度----------", temperature/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","temperature":%v,"state":"%v"}`, td.DeviceModel, temperature/10, td.Client.GetStatus()))
+			ss3 := strings.Split(s2, " ")[2]
+			ss4 := strings.Split(s2, " ")[3]
+			ss5 := strings.Split(s2, " ")[4]
+			ss6 := strings.Split(s2, " ")[5]
+			rollH,_:=strconv.Atoi(ss1)
+			rollL,_:=strconv.Atoi(ss2)
+			pitchH,_:=strconv.Atoi(ss3)
+			pitchL,_:=strconv.Atoi(ss4)
+			yawH,_:=strconv.Atoi(ss5)
+			YawL,_:=strconv.Atoi(ss6)
+			k:= 180.0
+			roll := float64(rollH << 8 | rollL) / 32768.0 * k
+			pitch := float64(pitchH << 8 | pitchL) / 32768.0 * k
+			yaw := float64(yawH << 8 | YawL) / 32768.0 * k
+			if roll >= k{
+				roll -= 2 * k
+			}
+			if pitch>=k{
+				pitch -= 2 * k
+			}
+			if yaw>=k{
+				yaw -= 2 * k
+			}
+			klog.V(2).Info("---------roll-----------",roll)
+			klog.V(2).Info("---------pitch-----------",pitch)
+			klog.V(2).Info("---------yaw-----------",yaw)
+			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","Roll":%v,"Pitch":%v,"Yaw":%v,"state":"%v"}`, td.DeviceModel, roll,pitch,yaw, td.Client.GetStatus()))
+		} else if td.Name == "magnetic" {
+			ss1 := strings.Split(s2, " ")[0]
+			ss2 := strings.Split(s2, " ")[1]
+			ss3 := strings.Split(s2, " ")[2]
+			ss4 := strings.Split(s2, " ")[3]
+			ss5 := strings.Split(s2, " ")[4]
+			ss6 := strings.Split(s2, " ")[5]
+			hxH,_:=strconv.Atoi(ss1)
+			hxL,_:=strconv.Atoi(ss2)
+			hyH,_:=strconv.Atoi(ss3)
+			hyL,_:=strconv.Atoi(ss4)
+			hzH,_:=strconv.Atoi(ss5)
+			hzL,_:=strconv.Atoi(ss6)
+			k:= 1.0
+			hX := float64(hxH << 8 | hxL)
+			hY := float64(hyH << 8 | hyL)
+			hZ := float64(hzH << 8 | hzL)
+			if hX >= k{
+				hX -= 2 * k
+			}
+			if hY>=k{
+				hY -= 2 * k
+			}
+			if hZ>=k{
+				hZ -= 2 * k
+			}
+			klog.V(2).Info("---------hX-----------",hX)
+			klog.V(2).Info("---------hY-----------",hY)
+			klog.V(2).Info("---------hZ-----------",hZ)
+			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","Hx":%v,"Hy":%v,"Hz":%v,"state":"%v"}`, td.DeviceModel, hX,hY,hZ, td.Client.GetStatus()))
+	}else if td.Name=="element"{
+			ss1 := strings.Split(s2, " ")[0]
+			ss2 := strings.Split(s2, " ")[1]
+			ss3 := strings.Split(s2, " ")[2]
+			ss4 := strings.Split(s2, " ")[3]
+			ss5 := strings.Split(s2, " ")[4]
+			ss6 := strings.Split(s2, " ")[5]
+			ss7 := strings.Split(s2, " ")[6]
+			ss8 := strings.Split(s2, " ")[7]
+			q0H,_:=strconv.Atoi(ss1)
+			q0L,_:=strconv.Atoi(ss2)
+			q1H,_:=strconv.Atoi(ss3)
+			q1L,_:=strconv.Atoi(ss4)
+			q2H,_:=strconv.Atoi(ss5)
+			q2L,_:=strconv.Atoi(ss6)
+			q3H,_:=strconv.Atoi(ss7)
+			q3L,_:=strconv.Atoi(ss8)
+			k:= 1.0
+			q0 := float64(q0H << 8 | q0L)/32768.0
+			q1 := float64(q1H << 8 | q1L)/32768.0
+			q2 := float64(q2H << 8 | q2L)/32768.0
+			q3 := float64(q3H << 8 | q3L)/32768.0
+			if q0 >= k{
+				q0 -= 2 * k
+			}
+			if q1>=k{
+				q1 -= 2 * k
+			}
+			if q2>=k{
+				q2 -= 2 * k
+			}
+			if q3>=k{
+				q3 -= 2 * k
+			}
+			klog.V(2).Info("---------q0-----------",q0)
+			klog.V(2).Info("---------q1-----------",q1)
+			klog.V(2).Info("---------q2-----------",q2)
+			klog.V(2).Info("---------q3-----------",q3)
+			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","Q0":%v,"Q1":%v,"Q2":%v,"Q3":%v,state":"%v"}`, td.DeviceModel, q0,q1,q2,q3, td.Client.GetStatus()))
 		}
-	} else if td.DeviceInstanceName == "device-shutter02" {
-		var pm2point5, pm10, noise float64
-		if td.Name == "pm2.5" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			pm2point5 = Hex2Dec(ss1, ss2)
-			fmt.Println("----------pm2.5--------------", pm2point5)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","pm2point5":%v,"state":"%v"}`, td.DeviceModel, pm2point5, td.Client.GetStatus()))
-		} else if td.Name == "pm10" {
-			ss1 := strings.Split(s2, " ")[2]
-			ss2 := strings.Split(s2, " ")[3]
-			pm10 = Hex2Dec(ss1, ss2)
-			fmt.Println("----------pm10--------------", pm10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","pm2point5":%v,"state":"%v"}`, td.DeviceModel, pm10, td.Client.GetStatus()))
-		} else if td.Name == "noise" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			noise = Hex2Dec(ss1, ss2)
-			fmt.Println("----------噪音--------------", noise/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","noise":%v,"state":"%v"}`, td.DeviceModel, noise/10, td.Client.GetStatus()))
-		}
-	} else if td.DeviceInstanceName == "device-snow" {
-		var snow float64
-		ss1 := strings.Split(s2, " ")[0]
-		ss2 := strings.Split(s2, " ")[1]
-		snow = Hex2Dec(ss1, ss2)
-		fmt.Println("----------雨雪--------------", snow)
-		globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","snow":%v,"state":"%v"}`, td.DeviceModel, snow, td.Client.GetStatus()))
-	}
 	// construct payload
 	var payload []byte
 	if strings.Contains(td.Topic, "$hw") {
