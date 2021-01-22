@@ -7,5 +7,5 @@ build:
 
 push: build
 	@$(eval REV := $(shell git rev-parse HEAD|cut -c 1-8))
-	@docker tag gopherlv/ke-modbus-mapper gopherlv/ke-modbus-mapper:ke-modbus-mapper-$(REV)
-	@docker push gopherlv/ke-modbus-mapper:ke-modbus-mapper-$(REV)
+	@docker tag gopherlv/ke-modbus-mapper gopherlv/ke-modbus-mapper-imu:ke-modbus-mapper-imu-$(REV)
+	@docker push gopherlv/ke-modbus-mapper-imu:ke-modbus-mapper-imu-$(REV)
