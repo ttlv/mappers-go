@@ -44,7 +44,7 @@ type Mqtt struct {
 // ErrConfigCert error of certification configuration.
 var ErrConfigCert = errors.New("Both certification and private key must be provided")
 
-var defaultConfigFile = "./config.yaml"
+var defaultConfigFile = "/etc/kubeedge/config.yaml"
 
 // Parse parse the configuration file. If failed, return error.
 func (c *Config) Parse() error {
