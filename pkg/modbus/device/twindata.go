@@ -54,7 +54,7 @@ func (td *TwinData) Run() error {
 	}
 	s1 := strings.Replace(fmt.Sprintf("%v", td.Results), "[", "", -1)
 	s2 := strings.Replace(s1, "]", "", -1)
-	if td.DeviceInstanceName == "device-shutter01" {
+	if strings.Contains(td.DeviceInstanceName, "device-shutter01") {
 		var lux, co2, pressure, temperature, humidity float64
 		if td.Name == "lux" {
 			ss1 := strings.Split(s2, " ")[0]
@@ -89,7 +89,7 @@ func (td *TwinData) Run() error {
 			fmt.Println("----------温度----------", temperature/10)
 			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","temperature":%v,"state":"%v"}`, td.DeviceModel, temperature/10, td.Client.GetStatus()))
 		}
-	} else if td.DeviceInstanceName == "device-shutter02" {
+	} else if strings.Contains(td.DeviceInstanceName, "device-shutter02") {
 		var pm2point5, pm10, noise float64
 		if td.Name == "pm2.5" {
 			ss1 := strings.Split(s2, " ")[0]
@@ -110,7 +110,7 @@ func (td *TwinData) Run() error {
 			fmt.Println("----------噪音--------------", noise/10)
 			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%v","noise":%v,"state":"%v"}`, td.DeviceModel, noise/10, td.Client.GetStatus()))
 		}
-	} else if td.DeviceInstanceName == "device-snow" {
+	} else if strings.Contains(td.DeviceInstanceName, "device-snow") {
 		var snow float64
 		ss1 := strings.Split(s2, " ")[0]
 		ss2 := strings.Split(s2, " ")[1]
