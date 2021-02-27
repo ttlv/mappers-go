@@ -82,9 +82,9 @@
 				"parity": "even",
 				"stopBits": 1
 			},
-            "customizedValues": {
-                "serialType": "RS485"
-            }
+			"customizedValues": {
+				"serialType": "RS485"
+			}
 		}
 	}]
 }

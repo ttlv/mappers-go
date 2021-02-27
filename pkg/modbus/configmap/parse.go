@@ -18,7 +18,7 @@ package configmap
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/kubeedge/mappers-go/pkg/common"
@@ -42,91 +42,89 @@ func Parse(path string,
 		return err
 	}
 
-	for i := 0; i < len(deviceProfile.DeviceInstances); i++ {
-		instance := deviceProfile.DeviceInstances[i]
-		j := 0
-		for j = 0; j < len(deviceProfile.Protocols); j++ {
-			if instance.ProtocolName == deviceProfile.Protocols[j].Name {
-				instance.PProtocol = deviceProfile.Protocols[j]
+	for _, deviceInstance := range deviceProfile.DeviceInstances {
+		for index, protocol := range deviceProfile.Protocols {
+			var protocolFound bool
+			if protocol.Protocol != globals.Modbus {
+				continue
+			}
+			if deviceInstance.ProtocolName == protocol.Name {
+				protocolFound = true
+				deviceInstance.PProtocol = protocol
 				break
 			}
+			if !protocolFound && index == len(deviceProfile.Protocols)-1 {
+				return fmt.Errorf("Protocol not found")
+			}
 		}
-		if j == len(deviceProfile.Protocols) {
-			err = errors.New("Protocol not found")
-			return err
-		}
-
-		if instance.PProtocol.Protocol != "modbus" {
-			continue
-		}
-
-		for k := 0; k < len(instance.PropertyVisitors); k++ {
-			modelName := instance.PropertyVisitors[k].ModelName
-			propertyName := instance.PropertyVisitors[k].PropertyName
-			l := 0
-			for l = 0; l < len(deviceProfile.DeviceModels); l++ {
-				if modelName == deviceProfile.DeviceModels[l].Name {
-					m := 0
-					for m = 0; m < len(deviceProfile.DeviceModels[l].Properties); m++ {
-						if propertyName == deviceProfile.DeviceModels[l].Properties[m].Name {
-							instance.PropertyVisitors[k].PProperty = deviceProfile.DeviceModels[l].Properties[m]
+		for _, propertyVisitor := range deviceInstance.PropertyVisitors {
+			modelName := propertyVisitor.ModelName
+			propertyName := propertyVisitor.PropertyName
+			for index, deviceModel := range deviceProfile.DeviceModels {
+				var deviceModelFound bool
+				if modelName == deviceModel.Name {
+					deviceModelFound = true
+					for index, property := range deviceModel.Properties {
+						var propertyFound bool
+						if propertyName == property.Name {
+							propertyFound = true
+							propertyVisitor.PProperty = property
 							break
 						}
-					}
-
-					if m == len(deviceProfile.DeviceModels[l].Properties) {
-						err = errors.New("Property not found")
-						return err
+						if !propertyFound && index == len(deviceModel.Properties)-1 {
+							return fmt.Errorf("Property not found")
+						}
 					}
 					break
 				}
-			}
-			if l == len(deviceProfile.DeviceModels) {
-				err = errors.New("Device model not found")
-				return err
-			}
-		}
-
-		for k := 0; k < len(instance.Twins); k++ {
-			name := instance.Twins[k].PropertyName
-			l := 0
-			for l = 0; l < len(instance.PropertyVisitors); l++ {
-				if name == instance.PropertyVisitors[l].PropertyName {
-					instance.Twins[k].PVisitor = &instance.PropertyVisitors[l]
-					break
+				if !deviceModelFound && index == len(deviceProfile.DeviceModels)-1 {
+					return fmt.Errorf("Device model not found")
 				}
 			}
-			if l == len(instance.PropertyVisitors) {
-				return errors.New("PropertyVisitor not found")
-			}
 		}
-		instance.Datas.Properties = instance.Properties
-		instance.Datas.Topic = instance.Topic
-		for k := 0; k < len(instance.Datas.Properties); k++ {
-			name := instance.Datas.Properties[k].PropertyName
-			l := 0
-			for l = 0; l < len(instance.PropertyVisitors); l++ {
-				if name == instance.PropertyVisitors[l].PropertyName {
-					instance.Datas.Properties[k].PVisitor = &instance.PropertyVisitors[l]
+		for _, twin := range deviceInstance.Twins {
+			propertyName := twin.PropertyName
+			for index, propertyVisitor := range deviceInstance.PropertyVisitors {
+				var propertyNameFound bool
+				if propertyName == propertyVisitor.PropertyName {
+					propertyNameFound = true
+					twin.PVisitor = &propertyVisitor
 					break
 				}
-			}
-			if l == len(instance.PropertyVisitors) {
-				return errors.New("PropertyVisitor not found")
+				if !propertyNameFound && index == len(deviceInstance.PropertyVisitors)-1 {
+					return fmt.Errorf("PropertyVisitor not found")
+				}
 			}
 		}
 
-		devices[instance.ID] = new(globals.ModbusDev)
-		devices[instance.ID].Instance = instance
-		klog.V(4).Info("Instance: ", instance.ID, instance)
+		deviceInstance.Datas.Properties = deviceInstance.Properties
+		deviceInstance.Datas.Topic = deviceInstance.Topic
+
+		for _, property := range deviceInstance.Datas.Properties {
+			propertyName := property.PropertyName
+			for index, propertyVisitor := range deviceInstance.PropertyVisitors {
+				var PropertyNameFound bool
+				if propertyName == propertyVisitor.PropertyName {
+					PropertyNameFound = true
+					property.PVisitor = &propertyVisitor
+					break
+				}
+				if !PropertyNameFound && index == len(deviceInstance.PropertyVisitors)-1 {
+					return fmt.Errorf("PropertyVisitor not found")
+				}
+			}
+		}
+		devices[deviceInstance.ID] = new(globals.ModbusDev)
+		devices[deviceInstance.ID].Instance = deviceInstance
+		klog.V(4).Info("Instance: ", deviceInstance.ID, deviceInstance)
+	}
+	for _, deviceModel := range deviceProfile.DeviceModels {
+		dms[deviceModel.Name] = deviceModel
 	}
 
-	for i := 0; i < len(deviceProfile.DeviceModels); i++ {
-		dms[deviceProfile.DeviceModels[i].Name] = deviceProfile.DeviceModels[i]
-	}
-
-	for i := 0; i < len(deviceProfile.Protocols); i++ {
-		protocols[deviceProfile.Protocols[i].Name] = deviceProfile.Protocols[i]
+	for _, protocol := range deviceProfile.Protocols {
+		protocols[protocol.Name] = protocol
 	}
 	return nil
+
 }
