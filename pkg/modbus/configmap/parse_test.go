@@ -5,16 +5,16 @@ import (
 	"testing"
 
 	"github.com/kubeedge/mappers-go/pkg/common"
-  "github.com/kubeedge/mappers-go/pkg/modbus/globals"
+	"github.com/kubeedge/mappers-go/pkg/modbus/globals"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestParse(t *testing.T) {
-	var devices map[string]*ModbusDev
+	var devices map[string]*globals.ModbusDev
 	var models map[string]common.DeviceModel
 	var protocols map[string]common.Protocol
 
-	devices = make(map[string]*ModbusDev)
+	devices = make(map[string]*globals.ModbusDev)
 	models = make(map[string]common.DeviceModel)
 	protocols = make(map[string]common.Protocol)
 
@@ -27,11 +27,11 @@ func TestParse(t *testing.T) {
 }
 
 func TestParseNeg(t *testing.T) {
-	var devices map[string]*ModbusDev
+	var devices map[string]*globals.ModbusDev
 	var models map[string]common.DeviceModel
 	var protocols map[string]common.Protocol
 
-	devices = make(map[string]*ModbusDev)
+	devices = make(map[string]*globals.ModbusDev)
 	models = make(map[string]common.DeviceModel)
 	protocols = make(map[string]common.Protocol)
 
