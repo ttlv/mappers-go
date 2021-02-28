@@ -114,12 +114,6 @@ func Parse(path string,
 				}
 			}
 		}
-		for _, property := range deviceProfile.DeviceInstances[i].Datas.Properties {
-			var visitorConfig ModbusVisitorConfig
-			if err := json.Unmarshal([]byte(property.PVisitor.VisitorConfig), &visitorConfig); err != nil {
-				klog.Error("Unmarshal visitor config failed")
-			}
-		}
 		devices[deviceProfile.DeviceInstances[i].ID] = new(globals.ModbusDev)
 		devices[deviceProfile.DeviceInstances[i].ID].Instance = deviceProfile.DeviceInstances[i]
 		klog.V(4).Info("Instance: ", deviceProfile.DeviceInstances[i].ID, deviceProfile.DeviceInstances[i])
