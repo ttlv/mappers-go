@@ -189,7 +189,7 @@ func initTwin(dev *globals.ModbusDev) {
 
 // initData initialize the timer to get data.
 func initData(dev *globals.ModbusDev) {
-	if dev.Instance.Model=="modebus-rtu-imu-model"{
+	if dev.Instance.Model == "modbus-rtu-imu-model" {
 		for i := 0; i < len(dev.Instance.Datas.Properties); i++ {
 			var visitorConfig configmap.ModbusVisitorConfig
 			if err := json.Unmarshal([]byte(dev.Instance.Datas.Properties[i].PVisitor.VisitorConfig), &visitorConfig); err != nil {
