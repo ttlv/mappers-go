@@ -48,9 +48,16 @@ func (td *TwinData) Run() error {
 		err error
 	)
 	td.Results, err = td.Client.Get(td.RegisterType, td.Address, td.Quantity)
+	// 访问失败之后，继续访问，访问10次，如果10次全部失败说明设备或者串口不可用，直接retuen
 	if err != nil {
-		klog.Error("Get register failed: ", err)
-		return err
+		for i := 0; i <= 9; i++ {
+			if td.Results, err = td.Client.Get(td.RegisterType, td.Address, td.Quantity); err == nil {
+				break
+			}
+			if i == 9 {
+				return fmt.Errorf("设备不可用")
+			}
+		}
 	}
 	s1 := strings.Replace(fmt.Sprintf("%v", td.Results), "[", "", -1)
 	s2 := strings.Replace(s1, "]", "", -1)
