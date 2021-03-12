@@ -95,7 +95,6 @@ func (td *TwinData) Run() error {
 	klog.V(2).Info("---------accX-----------", accX)
 	klog.V(2).Info("---------accY-----------", accY)
 	klog.V(2).Info("---------accZ-----------", accZ)
-	//globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","accX":%f,"accY":%f,"accZ":%f,"node":"%s","state":"%s"}`, td.DeviceModel, accX, accY, accZ, nodeName, td.Client.GetStatus()))
 	// angularVelocity
 
 	ss7 := splitS2[6]
@@ -126,7 +125,6 @@ func (td *TwinData) Run() error {
 	klog.V(2).Info("---------wX-----------", wX)
 	klog.V(2).Info("---------wY-----------", wY)
 	klog.V(2).Info("---------wZ-----------", wZ)
-	//globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","wX":%f,"wY":%f,"wZ":%f,"node":"%s","state":"%s"}`, td.DeviceModel, wX, wY, wZ, nodeName, td.Client.GetStatus()))
 	// magnetic
 	ss13 := splitS2[12]
 	ss14 := splitS2[13]
@@ -156,7 +154,6 @@ func (td *TwinData) Run() error {
 	klog.V(2).Info("---------hX-----------", hX)
 	klog.V(2).Info("---------hY-----------", hY)
 	klog.V(2).Info("---------hZ-----------", hZ)
-	//globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","Hx":%f,"Hy":%f,"Hz":%f,"node":"%s","state":"%s"}`, td.DeviceModel, hX, hY, hZ, nodeName, td.Client.GetStatus()))
 	// angular
 	ss19 := splitS2[18]
 	ss20 := splitS2[19]
@@ -186,7 +183,6 @@ func (td *TwinData) Run() error {
 	klog.V(2).Info("---------roll-----------", roll)
 	klog.V(2).Info("---------pitch-----------", pitch)
 	klog.V(2).Info("---------yaw-----------", yaw)
-	//globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","Roll":%f,"Pitch":%f,"Yaw":%f,"node":"%s","state":"%s"}`, td.DeviceModel, roll, pitch, yaw, nodeName, td.Client.GetStatus()))
 
 	//element
 	ss25 := splitS2[len(splitS2)-8]
@@ -226,7 +222,7 @@ func (td *TwinData) Run() error {
 	klog.V(2).Info("---------q1-----------", q1)
 	klog.V(2).Info("---------q2-----------", q2)
 	klog.V(2).Info("---------q3-----------", q3)
-	globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","accX":%f,"accY":%f,"accZ":%f,"wX":%f,"wY":%f,"wZ":%f,"Q0":%f,"Hx":%f,"Hy":%f,"Hz":%f,"Roll":%f,"Pitch":%f,"Yaw":%f,"Q1":%f,"Q2":%f,"Q3":%f,"node":"%s",state":"%s"}`, "test", accX, accY, accZ, wX, wY, wZ, hX, hY, hZ, roll, pitch, yaw, q0, q1, q2, q3, nodeName, td.Client.GetStatus()))
+	globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","accX":%f,"accY":%f,"accZ":%f,"wX":%f,"wY":%f,"wZ":%f,"Q0":%f,"Hx":%f,"Hy":%f,"Hz":%f,"Roll":%f,"Pitch":%f,"Yaw":%f,"Q1":%f,"Q2":%f,"Q3":%f,"node":"%s",state":"%s"}`, td.DeviceInstanceName, accX, accY, accZ, wX, wY, wZ, hX, hY, hZ, roll, pitch, yaw, q0, q1, q2, q3, nodeName, td.Client.GetStatus()))
 	// construct payload
 	var payload []byte
 	if strings.Contains(td.Topic, "$hw") {
