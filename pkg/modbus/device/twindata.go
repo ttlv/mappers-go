@@ -221,7 +221,7 @@ func (td *TwinData) Run() error {
 	klog.V(2).Info("---------q1-----------", q1)
 	klog.V(2).Info("---------q2-----------", q2)
 	klog.V(2).Info("---------q3-----------", q3)
-	globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","accX":%f,"accY":%f,"accZ":%f,"wX":%f,"wY":%f,"wZ":%f,"Q0":%f,"Hx":%f,"Hy":%f,"Hz":%f,"Roll":%f,"Pitch":%f,"Yaw":%f,"Q1":%f,"Q2":%f,"Q3":%f,"node":"%s",state":"%s","topic_key":"modbus_rtu_imu_model"}`, td.DeviceInstanceName, accX, accY, accZ, wX, wY, wZ, hX, hY, hZ, roll, pitch, yaw, q0, q1, q2, q3, nodeName, td.Client.GetStatus()))
+	globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"node":"%s","__name__":"%s","accX":%f,"accY":%f,"accZ":%f,"wX":%f,"wY":%f,"wZ":%f,"Hx":%f,"Hy":%f,"Hz":%f,"Roll":%f,"Pitch":%f,"Yaw":%f,"Q0":%f,"Q1":%f,"Q2":%f,"Q3":%f,"state":"%s","device":"imu","topicKey":"%s"}`, nodeName, td.DeviceInstanceName, accX, accY, accZ, wX, wY, wZ, hX, hY, hZ, roll, pitch, yaw, q0, q1, q2, q3, td.Client.GetStatus(), globals.TopicKey))
 	// construct payload
 	var payload []byte
 	if strings.Contains(td.Topic, "$hw") {
