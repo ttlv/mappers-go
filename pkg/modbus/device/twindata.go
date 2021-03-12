@@ -18,7 +18,6 @@ package device
 
 import (
 	"fmt"
-	"math"
 	"strconv"
 	"strings"
 
@@ -222,7 +221,7 @@ func (td *TwinData) Run() error {
 	klog.V(2).Info("---------q1-----------", q1)
 	klog.V(2).Info("---------q2-----------", q2)
 	klog.V(2).Info("---------q3-----------", q3)
-	globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","accX":%f,"accY":%f,"accZ":%f,"wX":%f,"wY":%f,"wZ":%f,"Q0":%f,"Hx":%f,"Hy":%f,"Hz":%f,"Roll":%f,"Pitch":%f,"Yaw":%f,"Q1":%f,"Q2":%f,"Q3":%f,"node":"%s",state":"%s"}`, td.DeviceInstanceName, accX, accY, accZ, wX, wY, wZ, hX, hY, hZ, roll, pitch, yaw, q0, q1, q2, q3, nodeName, td.Client.GetStatus()))
+	globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","accX":%f,"accY":%f,"accZ":%f,"wX":%f,"wY":%f,"wZ":%f,"Q0":%f,"Hx":%f,"Hy":%f,"Hz":%f,"Roll":%f,"Pitch":%f,"Yaw":%f,"Q1":%f,"Q2":%f,"Q3":%f,"node":"%s",state":"%s","topic_key":"modbus_rtu_imu_model"}`, td.DeviceInstanceName, accX, accY, accZ, wX, wY, wZ, hX, hY, hZ, roll, pitch, yaw, q0, q1, q2, q3, nodeName, td.Client.GetStatus()))
 	// construct payload
 	var payload []byte
 	if strings.Contains(td.Topic, "$hw") {
@@ -242,13 +241,4 @@ func (td *TwinData) Run() error {
 
 	klog.V(2).Infof("Update value: %s, topic: %s", strconv.Itoa(int(td.Results[0])), td.Topic)
 	return err
-}
-
-func Hex2Dec(vals ...string) float64 {
-	var result float64
-	for index, val := range vals {
-		floatVal, _ := strconv.ParseFloat(val, 64)
-		result += math.Pow(256, float64(len(vals)-index)-1) * floatVal
-	}
-	return result
 }
