@@ -189,7 +189,7 @@ func initTwin(dev *globals.ModbusDev) {
 
 // initData initialize the timer to get data.
 func initData(dev *globals.ModbusDev) {
-	if dev.Instance.Model == "modbus-rtu-imu-model" {
+	if dev.Instance.Model == "modbus-rtu-shutter-model" {
 		for _, property := range dev.Instance.Datas.Properties {
 			var visitorConfig configmap.ModbusVisitorConfig
 			if err := json.Unmarshal([]byte(property.PVisitor.VisitorConfig), &visitorConfig); err != nil {
@@ -197,16 +197,16 @@ func initData(dev *globals.ModbusDev) {
 			}
 		}
 		twinData := TwinData{Client: dev.ModbusClient,
-			Name:               "IMUALL",
+			Name:               "ShutterALL",
 			Type:               "float",
 			RegisterType:       "HoldingRegister",
-			Address:            52,
-			Quantity:           33,
+			Address:            0,
+			Quantity:           43,
 			Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
 			DeviceModel:        dev.Instance.Model,
 			DeviceInstanceName: dev.Instance.Name,
 		}
-		collectCycle, _ := time.ParseDuration("0.01s")
+		collectCycle, _ := time.ParseDuration("1s")
 		timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
 		timer.Start()
 	}
