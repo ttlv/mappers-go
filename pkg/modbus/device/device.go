@@ -189,32 +189,26 @@ func initTwin(dev *globals.ModbusDev) {
 
 // initData initialize the timer to get data.
 func initData(dev *globals.ModbusDev) {
-	for i := 0; i < len(dev.Instance.Datas.Properties); i++ {
-		var visitorConfig configmap.ModbusVisitorConfig
-		if err := json.Unmarshal([]byte(dev.Instance.Datas.Properties[i].PVisitor.VisitorConfig), &visitorConfig); err != nil {
-			klog.Error("Unmarshal visitor config failed")
+	if dev.Instance.Model == "modbus-rtu-shutter-model" {
+		for _, property := range dev.Instance.Datas.Properties {
+			var visitorConfig configmap.ModbusVisitorConfig
+			if err := json.Unmarshal([]byte(property.PVisitor.VisitorConfig), &visitorConfig); err != nil {
+				klog.Error("Unmarshal visitor config failed")
+			}
 		}
 		twinData := TwinData{Client: dev.ModbusClient,
-			Name:               dev.Instance.Datas.Properties[i].PropertyName,
-			Type:               dev.Instance.Datas.Properties[i].Metadatas.Type,
-			RegisterType:       visitorConfig.Register,
-			Address:            visitorConfig.Offset,
-			Quantity:           uint16(visitorConfig.Limit),
+			Name:               dev.Instance.Name,
+			Type:               "float",
+			RegisterType:       "HoldingRegister",
+			Address:            0,
+			Quantity:           43,
 			Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
 			DeviceModel:        dev.Instance.Model,
-			DeviceInstanceName: dev.Instance.Name}
-		collectCycle := time.Duration(dev.Instance.Datas.Properties[i].PVisitor.CollectCycle)
-		// If the collect cycle is not set, set it to 1 second.
-		if collectCycle == 0 {
-			collectCycle = 1 * time.Second
+			DeviceInstanceName: dev.Instance.Name,
 		}
+		collectCycle, _ := time.ParseDuration("1s")
 		timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
-		wg.Add(1)
-		go func() {
-			if err := timer.Start(); err != nil {
-				wg.Done()
-			}
-		}()
+		timer.Start()
 	}
 }
 

@@ -55,81 +55,75 @@ func (td *TwinData) Run() error {
 				break
 			}
 			if i == 9 {
+				klog.V(2).Infof("设备%v不可用", td.DeviceInstanceName)
 				return fmt.Errorf("设备不可用")
 			}
 		}
 	}
 	s1 := strings.Replace(fmt.Sprintf("%v", td.Results), "[", "", -1)
 	s2 := strings.Replace(s1, "]", "", -1)
+	splitS2 := strings.Split(s2, " ")
 	var nodeName string
 	if len(strings.Split(td.DeviceInstanceName, "-")) == 3 && strings.Split(td.DeviceInstanceName, "-")[2] != "" {
 		nodeName = strings.Split(td.DeviceInstanceName, "-")[2]
 	}
-	if strings.Contains(td.DeviceInstanceName, "device-shutter01") {
+	if strings.Contains(td.Name, "shutter1") {
 		var lux, co2, pressure, temperature, humidity float64
-		if td.Name == "lux" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			ss3 := strings.Split(s2, " ")[2]
-			ss4 := strings.Split(s2, " ")[3]
-			lux = Hex2Dec(ss1, ss2, ss3, ss4)
-			fmt.Println("----------光强----------", lux)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","lux":%f,"node":"%s","state":"%s"}`, td.DeviceModel, lux, nodeName, td.Client.GetStatus()))
-		} else if td.Name == "co2" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			co2 = Hex2Dec(ss1, ss2)
-			fmt.Println("----------co2----------", co2)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","co2":%f,"node":"%s","state":"%s"}`, td.DeviceModel, co2, nodeName, td.Client.GetStatus()))
-		} else if td.Name == "pressure" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			pressure = Hex2Dec(ss1, ss2)
-			fmt.Println("----------压强----------", pressure/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","pressure":%f,"node":"%s","state":"%s"}`, td.DeviceModel, pressure/10, nodeName, td.Client.GetStatus()))
-		} else if td.Name == "temperature" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			humidity = Hex2Dec(ss1, ss2)
-			fmt.Println("----------湿度----------", humidity/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","humidity":%f,"node":"%s","state":"%s"}`, td.DeviceModel, humidity/10, nodeName, td.Client.GetStatus()))
-		} else if td.Name == "humidity" {
-			ss1 := strings.Split(s2, " ")[2]
-			ss2 := strings.Split(s2, " ")[3]
-			temperature = Hex2Dec(ss1, ss2)
-			fmt.Println("----------温度----------", temperature/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","temperature":%f,"node":"%s","state":"%s"}`, td.DeviceModel, temperature/10, nodeName, td.Client.GetStatus()))
-		}
-	} else if strings.Contains(td.DeviceInstanceName, "device-shutter02") {
+		// 湿度
+		ss1 := splitS2[0]
+		ss2 := splitS2[1]
+		humidity = Hex2Dec(ss1, ss2) / 10
+		// 温度
+		ss3 := splitS2[2]
+		ss4 := splitS2[3]
+		temperature = Hex2Dec(ss3, ss4) / 10
+		// 光强
+		ss5 := splitS2[4]
+		ss6 := splitS2[5]
+		ss7 := splitS2[6]
+		ss8 := splitS2[7]
+		lux = Hex2Dec(ss5, ss6, ss7, ss8)
+		// CO2
+		ss11 := splitS2[14]
+		ss12 := splitS2[15]
+		co2 = Hex2Dec(ss11, ss12)
+		// 大气压强
+		ss13 := splitS2[22]
+		ss14 := splitS2[23]
+		pressure = Hex2Dec(ss13, ss14) / 10
+		klog.V(2).Info("---------湿度-----------", humidity)
+		klog.V(2).Info("---------温度-----------", temperature)
+		klog.V(2).Info("---------光强-----------", lux)
+		klog.V(2).Info("---------二氧化碳浓度-----------", co2)
+		klog.V(2).Info("---------大气压强-----------", pressure)
+		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"node":"%s", "__name__":"%s", "humidity":%f, "temperature":%f, "lux":%f, "co2":%f, "pressure":%f, "state":"%s"}`, nodeName, td.DeviceModel, humidity, temperature, lux, co2, pressure, td.Client.GetStatus()))
+	} else if strings.Contains(td.Name, "shutter2") {
 		var pm2point5, pm10, noise float64
-		if td.Name == "pm2.5" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			pm2point5 = Hex2Dec(ss1, ss2)
-			fmt.Println("----------pm2.5--------------", pm2point5)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","pm2point5":%f,"node":"%s","state":"%s"}`, td.DeviceModel, pm2point5, nodeName, td.Client.GetStatus()))
-		} else if td.Name == "pm10" {
-			ss1 := strings.Split(s2, " ")[2]
-			ss2 := strings.Split(s2, " ")[3]
-			pm10 = Hex2Dec(ss1, ss2)
-			fmt.Println("----------pm10--------------", pm10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","pm2point5":%f,"node":"%s","state":"%s"}`, td.DeviceModel, pm10, nodeName, td.Client.GetStatus()))
-		} else if td.Name == "noise" {
-			ss1 := strings.Split(s2, " ")[0]
-			ss2 := strings.Split(s2, " ")[1]
-			noise = Hex2Dec(ss1, ss2)
-			fmt.Println("----------噪音--------------", noise/10)
-			globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","noise":%f,"node":"%s","state":"%s"}`, td.DeviceModel, noise/10, nodeName, td.Client.GetStatus()))
-		}
-	} else if strings.Contains(td.DeviceInstanceName, "device-snow") {
+		// 噪音
+		ss9 := splitS2[8]
+		ss10 := splitS2[9]
+		noise = Hex2Dec(ss9, ss10) / 10
+		// PM2.5
+		ss15 := splitS2[40]
+		ss16 := splitS2[41]
+		pm2point5 = Hex2Dec(ss15, ss16)
+		// PM 10
+		ss17 := splitS2[42]
+		ss18 := splitS2[43]
+		pm10 = Hex2Dec(ss17, ss18)
+		klog.V(2).Info("---------噪音-----------", noise)
+		klog.V(2).Info("---------PM2.5-----------", pm2point5)
+		klog.V(2).Info("---------PM10-----------", pm10)
+		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"node":"%s", "__name__":"%s", "nosie":%f, "pm2.5":%f, "pm10":%f, "state":"%s"}`, nodeName, td.DeviceModel, noise, pm2point5, pm10, td.Client.GetStatus()))
+	} else if strings.Contains(td.Name, "snow") {
 		var snow float64
 		ss1 := strings.Split(s2, " ")[0]
 		ss2 := strings.Split(s2, " ")[1]
 		snow = Hex2Dec(ss1, ss2)
-		fmt.Println("----------雨雪--------------", snow)
-		globals.FBClient.Publish(td.DeviceModel, fmt.Sprintf(`{"__name__":"%s","snow":%f,"node":"%s","state":"%s"}`, td.DeviceModel, snow, nodeName, td.Client.GetStatus()))
+		klog.V(2).Info("----------雨雪--------------", snow)
+		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","snow":%f,"node":"%s","state":"%s"}`, td.DeviceModel, snow, nodeName, td.Client.GetStatus()))
+
 	}
-	// construct payload
 	var payload []byte
 	if strings.Contains(td.Topic, "$hw") {
 		if payload, err = common.CreateMessageTwinUpdate(td.Name, td.Type, strconv.Itoa(int(td.Results[0]))); err != nil {
