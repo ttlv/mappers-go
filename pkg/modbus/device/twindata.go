@@ -55,6 +55,7 @@ func (td *TwinData) Run() error {
 				break
 			}
 			if i == 9 {
+				klog.V(2).Infof("设备%v不可用", td.DeviceInstanceName)
 				return fmt.Errorf("设备不可用")
 			}
 		}
@@ -114,6 +115,14 @@ func (td *TwinData) Run() error {
 		klog.V(2).Info("---------PM2.5-----------", pm2point5)
 		klog.V(2).Info("---------PM10-----------", pm10)
 		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"node":"%s", "__name__":"%s", "nosie":%f, "pm2.5":%f, "pm10":%f, "state":"%s"}`, nodeName, td.DeviceModel, noise, pm2point5, pm10, td.Client.GetStatus()))
+	} else if strings.Contains(td.Name, "snow") {
+		var snow float64
+		ss1 := strings.Split(s2, " ")[0]
+		ss2 := strings.Split(s2, " ")[1]
+		snow = Hex2Dec(ss1, ss2)
+		klog.V(2).Info("----------雨雪--------------", snow)
+		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","snow":%f,"node":"%s","state":"%s"}`, td.DeviceModel, snow, nodeName, td.Client.GetStatus()))
+
 	}
 	var payload []byte
 	if strings.Contains(td.Topic, "$hw") {
