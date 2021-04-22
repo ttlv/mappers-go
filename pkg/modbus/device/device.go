@@ -229,7 +229,6 @@ func initData(dev *globals.ModbusDev) {
 			}
 		}()
 	}
-	wg.Wait()
 }
 
 // initSubscribeMqtt subscribe Mqtt topics.
