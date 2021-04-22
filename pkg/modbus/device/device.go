@@ -197,7 +197,7 @@ func initData(dev *globals.ModbusDev) {
 				Type:               "float",
 				RegisterType:       "HoldingRegister",
 				Address:            0,
-				Quantity:           21,
+				Quantity:           22,
 				Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
 				DeviceModel:        dev.Instance.Model,
 				DeviceInstanceName: dev.Instance.Name,
