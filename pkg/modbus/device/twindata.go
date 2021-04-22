@@ -18,6 +18,8 @@ package device
 
 import (
 	"fmt"
+	"github.com/CatchZeng/dingtalk"
+	"log"
 	"math"
 	"strconv"
 	"strings"
@@ -25,6 +27,7 @@ import (
 	"github.com/kubeedge/mappers-go/pkg/common"
 	"github.com/kubeedge/mappers-go/pkg/modbus/driver"
 	"github.com/kubeedge/mappers-go/pkg/modbus/globals"
+	"github.com/royeo/dingrobot"
 	"k8s.io/klog"
 )
 
@@ -56,6 +59,12 @@ func (td *TwinData) Run() error {
 			}
 			if i == 9 {
 				klog.V(2).Infof("设备%v不可用", td.DeviceInstanceName)
+				// 添加钉钉机器人提醒
+				webhook := "https://oapi.dingtalk.com/robot/send?access_token=e79d127635b34ce6992539a2a2794978136947f4e7f33eaccc5394828d72f570"
+				robot := dingrobot.NewRobot(webhook)
+				content := fmt.Sprintf("设备%v不可用", td.DeviceInstanceName)
+				atMobiles := []string{"吕涛涛"}
+				robot.SendText(content, atMobiles, false)
 				return fmt.Errorf("设备不可用")
 			}
 		}
