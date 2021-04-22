@@ -61,7 +61,7 @@ func (td *TwinData) Run() error {
 				webhook := "https://oapi.dingtalk.com/robot/send?access_token=e79d127635b34ce6992539a2a2794978136947f4e7f33eaccc5394828d72f570"
 				robot := dingrobot.NewRobot(webhook)
 				content := fmt.Sprintf("设备%v不可用", td.DeviceInstanceName)
-				atMobiles := []string{"吕涛涛"}
+				atMobiles := []string{"18626860751"}
 				robot.SendText(content, atMobiles, false)
 				return fmt.Errorf("设备不可用")
 			}
@@ -74,7 +74,7 @@ func (td *TwinData) Run() error {
 	if len(strings.Split(td.DeviceInstanceName, "-")) == 3 && strings.Split(td.DeviceInstanceName, "-")[2] != "" {
 		nodeName = strings.Split(td.DeviceInstanceName, "-")[2]
 	}
-	if strings.Contains(td.Name, "shutter1") {
+	if strings.Contains(td.DeviceInstanceName, "shutter1") {
 		var lux, co2, pressure, temperature, humidity float64
 		// 湿度
 		ss1 := splitS2[0]
@@ -104,7 +104,7 @@ func (td *TwinData) Run() error {
 		klog.V(2).Info("---------二氧化碳浓度-----------", co2)
 		klog.V(2).Info("---------大气压强-----------", pressure)
 		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"node":"%s", "__name__":"%s", "humidity":%f, "temperature":%f, "lux":%f, "co2":%f, "pressure":%f, "state":"%s"}`, nodeName, td.DeviceModel, humidity, temperature, lux, co2, pressure, td.Client.GetStatus()))
-	} else if strings.Contains(td.Name, "shutter2") {
+	} else if strings.Contains(td.DeviceInstanceName, "shutter2") {
 		var pm2point5, pm10, noise float64
 		// 噪音
 		ss9 := splitS2[8]
@@ -122,7 +122,7 @@ func (td *TwinData) Run() error {
 		klog.V(2).Info("---------PM2.5-----------", pm2point5)
 		klog.V(2).Info("---------PM10-----------", pm10)
 		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"node":"%s", "__name__":"%s", "nosie":%f, "pm2.5":%f, "pm10":%f, "state":"%s"}`, nodeName, td.DeviceModel, noise, pm2point5, pm10, td.Client.GetStatus()))
-	} else if strings.Contains(td.Name, "snow") {
+	} else if strings.Contains(td.DeviceInstanceName, "snow") {
 		var snow float64
 		ss1 := strings.Split(s2, " ")[0]
 		ss2 := strings.Split(s2, " ")[1]
