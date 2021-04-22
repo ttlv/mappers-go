@@ -31,6 +31,5 @@ var MqttClient common.MqttClient
 var FBClient common.MqttClient
 
 const (
-	Modbus   = "modbus"
-	TopicKey = "modbus_rtu_imu_model"
+	Modbus = "modbus"
 )
