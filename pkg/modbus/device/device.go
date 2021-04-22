@@ -189,26 +189,46 @@ func initTwin(dev *globals.ModbusDev) {
 
 // initData initialize the timer to get data.
 func initData(dev *globals.ModbusDev) {
-	if dev.Instance.Model == "modbus-rtu-shutter-model" {
-		for _, property := range dev.Instance.Datas.Properties {
-			var visitorConfig configmap.ModbusVisitorConfig
-			if err := json.Unmarshal([]byte(property.PVisitor.VisitorConfig), &visitorConfig); err != nil {
-				klog.Error("Unmarshal visitor config failed")
+	wg.Add(2)
+	go func() {
+		if dev.Instance.Model == "modbus-rtu-shutter-model" {
+			twinData := TwinData{Client: dev.ModbusClient,
+				Name:               "shutterAll",
+				Type:               "float",
+				RegisterType:       "HoldingRegister",
+				Address:            0,
+				Quantity:           21,
+				Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
+				DeviceModel:        dev.Instance.Model,
+				DeviceInstanceName: dev.Instance.Name,
+			}
+			collectCycle, _ := time.ParseDuration("1s")
+			timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
+			if err := timer.Start(); err != nil {
+				wg.Done()
 			}
 		}
-		twinData := TwinData{Client: dev.ModbusClient,
-			Type:               "float",
-			RegisterType:       "HoldingRegister",
-			Address:            0,
-			Quantity:           43,
-			Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
-			DeviceModel:        dev.Instance.Model,
-			DeviceInstanceName: dev.Instance.Name,
+	}()
+	go func() {
+		if dev.Instance.Model == "modbus-rtu-snow-model" {
+			twinData := TwinData{Client: dev.ModbusClient,
+				Name:               "snow",
+				Type:               "float",
+				RegisterType:       "HoldingRegister",
+				Address:            22,
+				Quantity:           1,
+				Topic:              fmt.Sprintf(common.TopicDataUpdate, dev.Instance.ID),
+				DeviceModel:        dev.Instance.Model,
+				DeviceInstanceName: dev.Instance.Name,
+			}
+			collectCycle, _ := time.ParseDuration("1s")
+			timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
+			if err := timer.Start(); err != nil {
+				wg.Done()
+			}
 		}
-		collectCycle, _ := time.ParseDuration("1s")
-		timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
-		timer.Start()
-	}
+	}()
+	wg.Wait()
 }
 
 // initSubscribeMqtt subscribe Mqtt topics.
