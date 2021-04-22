@@ -197,7 +197,7 @@ func initData(dev *globals.ModbusDev) {
 			}
 		}
 		twinData := TwinData{Client: dev.ModbusClient,
-			Name:               "ShutterALL",
+			Name:               dev.Instance.Name,
 			Type:               "float",
 			RegisterType:       "HoldingRegister",
 			Address:            0,
