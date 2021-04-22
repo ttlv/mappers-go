@@ -18,8 +18,6 @@ package device
 
 import (
 	"fmt"
-	"github.com/CatchZeng/dingtalk"
-	"log"
 	"math"
 	"strconv"
 	"strings"
