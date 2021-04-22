@@ -189,8 +189,8 @@ func initTwin(dev *globals.ModbusDev) {
 
 // initData initialize the timer to get data.
 func initData(dev *globals.ModbusDev) {
-	wg.Add(2)
 	if dev.Instance.Model == "modbus-rtu-shutter-model" {
+		wg.Add(1)
 		go func() {
 			twinData := TwinData{Client: dev.ModbusClient,
 				Name:               "shutterAll",
@@ -207,10 +207,10 @@ func initData(dev *globals.ModbusDev) {
 			if err := timer.Start(); err != nil {
 				wg.Done()
 			}
-
 		}()
 	}
 	if dev.Instance.Model == "modbus-rtu-snow-model" {
+		wg.Add(1)
 		go func() {
 			twinData := TwinData{Client: dev.ModbusClient,
 				Name:               "snow",
@@ -227,7 +227,6 @@ func initData(dev *globals.ModbusDev) {
 			if err := timer.Start(); err != nil {
 				wg.Done()
 			}
-
 		}()
 	}
 	wg.Wait()
