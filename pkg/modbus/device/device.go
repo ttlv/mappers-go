@@ -162,7 +162,6 @@ func initTwin(dev *globals.ModbusDev) {
 			continue
 		}
 		setVisitor(&visitorConfig, &dev.Instance.Twins[i], dev.ModbusClient)
-
 		twinData := TwinData{Client: dev.ModbusClient,
 			Name:               dev.Instance.Twins[i].PropertyName,
 			Type:               dev.Instance.Twins[i].Desired.Metadatas.Type,

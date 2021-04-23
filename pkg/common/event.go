@@ -19,6 +19,7 @@ package common
 import (
 	"crypto/tls"
 	"encoding/json"
+	"github.com/royeo/dingrobot"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -42,6 +43,13 @@ type MqttClient struct {
 	Cert       string
 	PrivateKey string
 	Client     mqtt.Client
+}
+
+// DingTalk Client
+
+type DingTalkClient struct {
+	Webhook string
+	Robot   dingrobot.Roboter
 }
 
 // newTLSConfig new TLS configuration.
@@ -153,4 +161,8 @@ func CreateMessageState(state string) (msg []byte, err error) {
 
 	msg, err = json.Marshal(stateMsg)
 	return
+}
+
+func (dc DingTalkClient) NewDingTalkClient() {
+	dc.Robot = dingrobot.NewRobot(dc.Webhook)
 }

@@ -27,8 +27,9 @@ import (
 
 // Config is the modbus mapper configuration.
 type Config struct {
-	Mqtt      Mqtt   `yaml:"mqtt,omitempty"`
-	Configmap string `yaml:"configmap"`
+	Mqtt      Mqtt     `yaml:"mqtt,omitempty"`
+	DingTalk  DingTalk `yaml:"dingTalk,omitempty"`
+	Configmap string   `yaml:"configmap"`
 }
 
 // Mqtt is the Mqtt configuration.
@@ -39,6 +40,10 @@ type Mqtt struct {
 	Password        string `yaml:"password,omitempty"`
 	Cert            string `yaml:"certification,omitempty"`
 	PrivateKey      string `yaml:"privatekey,omitempty"`
+}
+
+type DingTalk struct {
+	Webhook string `yaml:"webhook,omitempty"`
 }
 
 // ErrConfigCert error of certification configuration.

@@ -29,7 +29,18 @@ type ModbusDev struct {
 
 var MqttClient common.MqttClient
 var FBClient common.MqttClient
+var DingTalkClient common.DingTalkClient
+var NodeDetail map[string]string
+var AtMobiles = []string{"18626860751"}
 
 const (
 	Modbus = "modbus"
 )
+
+func init() {
+	NodeDetail = make(map[string]string)
+	NodeDetail["node-4e92b0ae0c01024c3be1"] = "点4，8号"
+	NodeDetail["node-93217f62d5c4fd7221d7"] = "22.283114452,N,113.736734930,E（点3 10号）"
+	NodeDetail["node-9d8f72a02af0f80f113a"] = "22.283249247,N,113.731630695,E（点8 9号)"
+	NodeDetail["node-242c5790f805ed7d06f8"] = "22.282939860,N,113.731631707,E （点7 11号）"
+}

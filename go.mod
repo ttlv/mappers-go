@@ -6,6 +6,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eclipse/paho.mqtt.golang v1.3.0
 	github.com/goburrow/serial v0.1.0 // indirect
+	github.com/hoisie/mustache v0.0.0-20160804235033-6375acf62c69
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/royeo/dingrobot v1.0.0
 	github.com/sailorvii/modbus v0.1.2

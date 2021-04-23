@@ -4,4 +4,7 @@ mqtt:
   username: ""
   password: ""
   certification: ""
+dingTalk:
+  webhook: https://oapi.dingtalk.com/robot/send?access_token=e79d127635b34ce6992539a2a2794978136947f4e7f33eaccc5394828d72f570
 configmap: /opt/kubeedge/deviceProfile.json
+
