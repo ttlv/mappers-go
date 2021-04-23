@@ -163,6 +163,7 @@ func CreateMessageState(state string) (msg []byte, err error) {
 	return
 }
 
-func (dc DingTalkClient) NewDingTalkClient() {
+func (dc DingTalkClient) NewDingTalkClient() DingTalkClient {
 	dc.Robot = dingrobot.NewRobot(dc.Webhook)
+	return dc
 }

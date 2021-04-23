@@ -54,8 +54,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	globals.DingTalkClient = common.DingTalkClient{Webhook: config.DingTalk.Webhook}
-	globals.DingTalkClient.NewDingTalkClient()
+	globals.DingTalkClient = common.DingTalkClient{Webhook: config.DingTalk.Webhook}.NewDingTalkClient()
 
 	if err = device.DevInit(config.Configmap); err != nil {
 		klog.Fatal(err)
