@@ -37,6 +37,17 @@ var devices map[string]*globals.ModbusDev
 var models map[string]common.DeviceModel
 var protocols map[string]common.Protocol
 var wg sync.WaitGroup
+var (
+	humidityCount    = 0
+	temperatureCount = 0
+	luxCount         = 0
+	co2Count         = 0
+	pressureCount    = 0
+	noiseCount       = 0
+	pm2Point5Count   = 0
+	pm10Count        = 0
+	snowCount        = 0
+)
 
 // setVisitor check if visitory is readonly, if not then set it.
 func setVisitor(visitorConfig *configmap.ModbusVisitorConfig, twin *common.Twin, client *driver.ModbusClient) {
@@ -201,7 +212,7 @@ func initData(dev *globals.ModbusDev) {
 				DeviceModel:        dev.Instance.Model,
 				DeviceInstanceName: dev.Instance.Name,
 			}
-			collectCycle, _ := time.ParseDuration("1s")
+			collectCycle, _ := time.ParseDuration("10s")
 			timer := common.Timer{Function: twinData.Run, Duration: collectCycle, Times: 0}
 			if err := timer.Start(); err != nil {
 				wg.Done()

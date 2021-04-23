@@ -84,39 +84,44 @@ func (td *TwinData) Run() error {
 		ss2 := splitS2[1]
 		humidity = Hex2Dec(ss1, ss2) / 10
 		if humidity < 0 || humidity > 100 {
-			content := mustache.Render(`
+			if humidityCount <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: humidity[湿度]
                 异常原因: {{value}}	
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", humidity),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
-
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", humidity),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				humidityCount += 1
+			}
 		}
 		// 温度
 		ss3 := splitS2[2]
 		ss4 := splitS2[3]
 		temperature = Hex2Dec(ss3, ss4) / 10
 		if temperature < -273 || temperature >= 6553.5 {
-			content := mustache.Render(`
+			if temperatureCount <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: temperature[温度]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", temperature),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", temperature),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				temperatureCount += 1
+			}
 		}
 		// 光强
 		ss5 := splitS2[4]
@@ -125,58 +130,66 @@ func (td *TwinData) Run() error {
 		ss8 := splitS2[7]
 		lux = Hex2Dec(ss5, ss6, ss7, ss8)
 		if lux <= 0 || lux > 5000 {
-			content := mustache.Render(`
+			if luxCount <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: lux[光照强度]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", lux),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", lux),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				luxCount += 1
+			}
 		}
 		// CO2
 		ss11 := splitS2[14]
 		ss12 := splitS2[15]
 		co2 = Hex2Dec(ss11, ss12)
 		if co2 <= 0 || co2 > 5000 {
-			content := mustache.Render(`
+			if co2Count <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: co2[二氧化碳浓度]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", co2),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", co2),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				co2Count += 1
+			}
 		}
 		// 大气压强
 		ss13 := splitS2[22]
 		ss14 := splitS2[23]
 		pressure = Hex2Dec(ss13, ss14) / 10
 		if pressure <= 0 || pressure > 1100 {
-			content := mustache.Render(`
+			if pressureCount <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: pressure[大气压强]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", pressure),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
-
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", pressure),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				pressureCount += 1
+			}
 		}
 		klog.V(2).Info("---------湿度-----------", humidity)
 		klog.V(2).Info("---------温度-----------", temperature)
@@ -191,57 +204,66 @@ func (td *TwinData) Run() error {
 		ss10 := splitS2[9]
 		noise = Hex2Dec(ss9, ss10) / 10
 		if noise <= 0 || noise >= 6553.5 {
-			content := mustache.Render(`
+			if noiseCount <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: noise[噪音]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", noise),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", noise),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				noiseCount += 1
+			}
 		}
 		// PM2.5
 		ss15 := splitS2[40]
 		ss16 := splitS2[41]
 		pm2point5 = Hex2Dec(ss15, ss16)
 		if pm2point5 <= 0 || pm2point5 >= 6553.5 {
-			content := mustache.Render(`
+			if pm2Point5Count <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: pm2.5[pm2.5]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", pm2point5),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", pm2point5),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				pm2point5 += 1
+			}
 		}
 		// PM 10
 		ss17 := splitS2[42]
 		ss18 := splitS2[43]
 		pm10 = Hex2Dec(ss17, ss18)
 		if pm10 <= 0 || pm10 >= 6553.5 {
-			content := mustache.Render(`
+			if pm10Count <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: pm10[pm10]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", pm10),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", pm10),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				pm10Count += 1
+			}
 		}
 		klog.V(2).Info("---------噪音-----------", noise)
 		klog.V(2).Info("---------PM2.5-----------", pm2point5)
@@ -253,20 +275,22 @@ func (td *TwinData) Run() error {
 		ss2 := strings.Split(s2, " ")[1]
 		snow = Hex2Dec(ss1, ss2)
 		if snow != 0 && snow != 1 {
-			content := mustache.Render(`
+			if snowCount <= 5 {
+				content := mustache.Render(`
                 节点编号: {{nodeName}}
                 节点位置: {{location}}
                 异常设备: {{abnormal}}
                 异常属性: snow[雨雪]
                 异常原因: {{value}}
 `, map[string]string{
-				"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
-				"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
-				"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
-				"value":    fmt.Sprintf("%f", snow),
-			})
-			globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
-
+					"nodeName": fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2]),
+					"location": globals.NodeDetail[fmt.Sprintf("node-%v", strings.Split(td.DeviceInstanceName, "-")[2])],
+					"abnormal": strings.Split(td.DeviceInstanceName, "-")[1],
+					"value":    fmt.Sprintf("%f", snow),
+				})
+				globals.DingTalkClient.Robot.SendText(content, globals.AtMobiles, false)
+				snowCount += 1
+			}
 		}
 		klog.V(2).Info("----------雨雪--------------", snow)
 		globals.FBClient.Publish(td.DeviceInstanceName, fmt.Sprintf(`{"__name__":"%s","snow":%f,"node":"%s","state":"%s"}`, td.DeviceModel, snow, nodeName, td.Client.GetStatus()))

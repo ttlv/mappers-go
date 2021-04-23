@@ -27,14 +27,16 @@ type ModbusDev struct {
 	ModbusClient *driver.ModbusClient
 }
 
-var MqttClient common.MqttClient
-var FBClient common.MqttClient
-var DingTalkClient common.DingTalkClient
-var NodeDetail map[string]string
-var AtMobiles = []string{"18626860751"}
+var (
+	MqttClient     common.MqttClient
+	FBClient       common.MqttClient
+	DingTalkClient common.DingTalkClient
+	NodeDetail     map[string]string
+	AtMobiles      = []string{"18626860751"}
+)
 
 const (
-	Modbus = "modbus"
+	Modbus           = "modbus"
 )
 
 func init() {
